@@ -275,6 +275,32 @@ PrintFormat(FILE *p, ClStreams stream, ClMsgLevels level, const char *filename, 
         case CL_FMT_TYPE_MESSAGE:
           len += vfprintf(p, message, args);
           break;
+        case CL_FMT_TYPE_IP_PRIVATE:{
+          struct hostent *host_entry;
+          char *hostbuffer = malloc(256);
+          char *ip_priv_buf;
+          int hostname;
+
+          hostname = gethostname(hostbuffer, sizeof(hostbuffer));
+          if (hostname == -1){
+            free(ip_priv_buf); //TODO double check this
+            free(hostbuffer);
+            break;
+          }
+          host_entry = gethostbyname(hostbuffer);
+          if (host_entry == NULL){
+            free(ip_priv_buf); //TODO double check this
+            free(hostbuffer);
+            break;
+          }
+          ip_priv_buf = inet_ntoa(*((struct in_addr*) host_entry->h_addr_list[0]));
+          if (ip_priv_buf == NULL){
+            free(ip_priv_buf); //TODO double check this
+            free(hostbuffer);
+          }
+          len += fprintf(p, "%s", ip_priv_buf);
+          break;
+        }
         default:
           break;
       }
@@ -385,6 +411,15 @@ ParseFormat(char *format) {
           j = i + 1;
           break;
         case 'm':
+          CaptureStr(format, i, j);
+          gFmt[gFmtLen].type = CL_FMT_TYPE_MESSAGE;
+          gFmtLen++;
+          i++;
+          j = i + 1;
+          break;
+        
+        //nickschiffer (nick@schiffer.us)
+        case 'i':
           CaptureStr(format, i, j);
           gFmt[gFmtLen].type = CL_FMT_TYPE_MESSAGE;
           gFmtLen++;

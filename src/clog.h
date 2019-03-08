@@ -11,6 +11,13 @@
 #include <unistd.h>
 #include <time.h>
 
+//Nick
+#include <errno.h>
+#include <netdb.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 /*
  * Description:
  * Macro functions corresponding to each of the different logging levels.
@@ -364,16 +371,18 @@ void ClSetPropFormat(char *format);
 char *ClGetPropFormat();
 
 typedef enum cl_fmt_type_e {
-  CL_FMT_TYPE_STRING     = 0,
-  CL_FMT_TYPE_TEXT_COLOR = 1,
-  CL_FMT_TYPE_TEXT_RESET = 2,
-  CL_FMT_TYPE_TIME       = 3,
-  CL_FMT_TYPE_LEVEL      = 4,
-  CL_FMT_TYPE_FILENAME   = 5,
-  CL_FMT_TYPE_LINE       = 6,
-  CL_FMT_TYPE_FUNCTION   = 7,
-  CL_FMT_TYPE_PROCESS_ID = 8,
-  CL_FMT_TYPE_MESSAGE    = 9
+  CL_FMT_TYPE_STRING     =  0,
+  CL_FMT_TYPE_TEXT_COLOR =  1,
+  CL_FMT_TYPE_TEXT_RESET =  2,
+  CL_FMT_TYPE_TIME       =  3,
+  CL_FMT_TYPE_LEVEL      =  4,
+  CL_FMT_TYPE_FILENAME   =  5,
+  CL_FMT_TYPE_LINE       =  6,
+  CL_FMT_TYPE_FUNCTION   =  7,
+  CL_FMT_TYPE_PROCESS_ID =  8,
+  CL_FMT_TYPE_MESSAGE    =  9,
+  CL_FMT_TYPE_IP_PRIVATE = 10,
+  CL_FMT_TYPE_IP_PUBLIC  = 11
 } ClFmtType;
 
 typedef struct cl_fmt_chunk_s {
